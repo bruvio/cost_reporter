@@ -168,16 +168,9 @@ def average(values):
 
 
 def pprint_currency(v):
-    if isinstance(v, float):
-        orig = "%.2f" % v
-    else:
-        orig = v
-
+    orig = "%.2f" % v if isinstance(v, float) else v
     new = re.sub(r"^(-?\d+)(\d{3})", fr"\g<1>,\g<2>", orig)
-    if orig == new:
-        return new
-    else:
-        return pprint_currency(new)
+    return new if orig == new else pprint_currency(new)
 
 
 def _render_row(label, per_month_bills):
@@ -312,7 +305,7 @@ def main(_event, _context):
     sess = boto3.Session()
     webhook_url = get_secret_string(sess, secret_id="slack/wc-platform-hook")
 
-    print("Sending message %s" % json.dumps(slack_payload))
+    print(f"Sending message {json.dumps(slack_payload)}")
 
     req = urllib.request.Request(
         webhook_url,
